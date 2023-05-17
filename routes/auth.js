@@ -1,11 +1,28 @@
+/***
+ * 
+ * 
+ * 
+ * 
+ * 
+ * This file provides the code of login and signup pages
+ * 
+ * 
+ * 
+ */
+
+
+
+
+
 const express = require("express");
+const nodemailer = require("nodemailer");
+require('dotenv').config();
 const User = require("../models/User");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fetchuser = require("../middlewares/fetchuser");
-const JWT_SECRET = "hello";
 
 //creating a user
 router.post(
@@ -34,17 +51,9 @@ router.post(
             id: user.id,
           },
         };
-        let authtoken = jwt.sign(data, JWT_SECRET);
+        let authtoken = jwt.sign(data, process.env.JWT_SECRET);
 
         return res.status(200).json({ authtoken });
-        // let data = {
-        //   user: {
-        //     id: user.id,
-        //   },
-        // };
-        // let authtoken = jwt.sign(data, JWT_SECRET);
-
-        // return res.status(200).json({ authtoken });
       }
     } else res.send({ errors: result.array() });
   }
@@ -75,7 +84,7 @@ router.post(
                 id: user.id,
               },
             };
-            let authtoken = jwt.sign(data, JWT_SECRET);
+            let authtoken = jwt.sign(data, process.env.JWT_SECRET);
 
             return res.status(200).json({ authtoken });
           } else {
@@ -96,10 +105,7 @@ router.post(
 router.post("/getuser", fetchuser, async (req, res) => {
   try {
     let userId = req.user.id;
-    // console.log(userId);
     let user = await User.findById(userId).select("-password");
-    // console.log(user);
-    // console.log(`User fetched successfully`);
     return res.send(user);
   } catch (err) {
     console.error({ message: err.message });
@@ -108,12 +114,3 @@ router.post("/getuser", fetchuser, async (req, res) => {
 });
 
 module.exports = router;
-
-/*
-{
- "email":"harry@gmail.com",
- "password":"123456"
-}
-
-
-*/
