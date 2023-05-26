@@ -23,6 +23,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fetchuser = require("../middlewares/fetchuser");
+const sendEmail = require("../controller/sendemail");
 
 //creating a user
 router.post(
@@ -51,6 +52,7 @@ router.post(
             id: user.id,
           },
         };
+        // await sendEmail(req.body.email, "Verify this email");
         let authtoken = jwt.sign(data, process.env.JWT_SECRET);
 
         return res.status(200).json({ authtoken });
